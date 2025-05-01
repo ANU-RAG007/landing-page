@@ -40,12 +40,11 @@
       flex: 1;
     }
 
-    /* Circular Profile Image */
     .profile-img-wrapper {
       width: 160px;
       height: 160px;
       margin: 0 auto;
-      border-radius: 50%; /* Make the image circular */
+      border-radius: 50%;
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0,0,0,0.5);
     }
@@ -73,21 +72,77 @@
       align-items: center;
     }
 
-    .links a {
+    .link-wrapper {
+      position: relative;
       width: 90%;
       max-width: 300px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+
+    .links a {
+      display: block;
       background-color: #ff3c00;
       color: white;
       padding: 12px;
       border-radius: 8px;
       text-decoration: none;
       font-weight: bold;
-      margin: 10px 0;
       transition: 0.3s;
+      position: relative;
+      z-index: 2;
     }
 
     .links a:hover {
       background-color: #cc2f00;
+    }
+
+    .car {
+      position: absolute;
+      left: -40px;
+      bottom: 5px;
+      width: 30px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 3;
+    }
+
+    .link-wrapper:hover .car {
+      opacity: 1;
+    }
+
+    .car.animate-car {
+      animation: driveCar 2s forwards;
+    }
+
+    @keyframes driveCar {
+      0% {
+        left: -40px;
+      }
+      100% {
+        left: calc(100% - 30px);
+      }
+    }
+
+    .smoke {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: url('smoke.png') no-repeat center center / cover;
+      opacity: 0.8;
+      pointer-events: none;
+      animation: smokeAnim 1s linear forwards;
+    }
+
+    @keyframes smokeAnim {
+      0% {
+        transform: scale(1) translateY(0);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(2) translateY(-20px);
+        opacity: 0;
+      }
     }
 
     footer {
@@ -107,9 +162,7 @@
 
 <div class="wrapper">
   <div class="container">
-    <!-- Circular Profile Image -->
     <div class="profile-img-wrapper">
-      <!-- Ensure the image file is named "profile.jpg" and is in the same folder -->
       <img src="profile3.jpg" alt="Profile Image" class="profile-img">
     </div>
 
@@ -117,10 +170,22 @@
     <p>Car Content | Drift Addict | Affiliate Gear Guide</p>
 
     <div class="links">
-      <a href="#">📺 YouTube Channel</a>
-      <a href="#">🚗 Car Gear Deals</a>
-      <a href="#">📸 Instagram</a>
-      <a href="#">📩 Contact Me</a>
+      <div class="link-wrapper">
+        <img src="car.png" class="car" alt="Car">
+        <a href="#" onclick="animateAndGo(event, this)">📺 YouTube Channel</a>
+      </div>
+      <div class="link-wrapper">
+        <img src="car.png" class="car" alt="Car">
+        <a href="#" onclick="animateAndGo(event, this)">🚗 Car Gear Deals</a>
+      </div>
+      <div class="link-wrapper">
+        <img src="car.png" class="car" alt="Car">
+        <a href="#" onclick="animateAndGo(event, this)">📸 Instagram</a>
+      </div>
+      <div class="link-wrapper">
+        <img src="car.png" class="car" alt="Car">
+        <a href="#" onclick="animateAndGo(event, this)">📩 Contact Me</a>
+      </div>
     </div>
   </div>
 
@@ -128,6 +193,38 @@
     <p>© 2025 SpeedX Creator | Built for car lovers ❤️</p>
   </footer>
 </div>
+
+<audio id="driftSound" src="drift.mp3" preload="auto"></audio>
+
+<script>
+  function animateAndGo(event, link) {
+    event.preventDefault();
+    const wrapper = link.parentElement;
+    const car = wrapper.querySelector('.car');
+    const sound = document.getElementById('driftSound');
+
+    car.classList.add('animate-car');
+    sound.currentTime = 0;
+    sound.play();
+
+    let interval = setInterval(() => {
+      const smoke = document.createElement('div');
+      smoke.className = 'smoke';
+      const carRect = car.getBoundingClientRect();
+      const wrapperRect = wrapper.getBoundingClientRect();
+      smoke.style.left = (car.offsetLeft + 10) + 'px';
+      smoke.style.bottom = '5px';
+      wrapper.appendChild(smoke);
+      setTimeout(() => wrapper.removeChild(smoke), 1000);
+    }, 100);
+
+    setTimeout(() => {
+      clearInterval(interval);
+      car.classList.remove('animate-car');
+      window.location.href = link.href;
+    }, 1400);
+  }
+</script>
 
 </body>
 </html>
